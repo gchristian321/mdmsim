@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 		else if(it.key().asString() == "outputFile") {
 			printf("Saving output to file: \"%s\"\n", it->asString().c_str());
 			outputFile.open(it->asString().c_str(), std::ofstream::out);
-			outputFile << "anglein:energy:angleout:x1:x2:x3:x4/D" << std::endl;
+			outputFile << "anglein:energy:hallprobe:multipole:angleout:x1:x2:x3:x4/D" << std::endl;
 		}
 		else if(it.key().asString() != "rayinFile") {
 			fprintf(stderr, "WARNING: skipping unrecognized JSON field: %s\n",
@@ -180,7 +180,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	auto get_and_print =
-		[&](double angle){
+		[&](double angle,double hp,double mp){
 			double x1,x2,x3,x4,a1;
 			mdm->GetOxfordWirePositions(a1,x1,x2,x3,x4);
 			double MM_R1_distance = 38.325 - 2.5;// W1 -> MM Row 1
@@ -193,26 +193,28 @@ int main(int argc, char* argv[]) {
 						 angle,energy,a1,a1/17.453293,x1,x2,x3,x4,mm1);
 			if(outputFile.is_open()){
 				char buf[4096];
-				sprintf(buf, "%8.2f\t %8.2f\t %8.2f\t %5.4f\t %5.4f\t %5.4f\t %5.4f",
-								angle,energy,a1,x1,x2,x3,x4);
+				sprintf(buf, "%8.2f\t %8.2f\t %8.2f\t %8.2f\t %8.2f\t %5.4f\t %5.4f\t %5.4f\t %5.4f",
+								angle,energy,hp,mp,a1,x1,x2,x3,x4);
 				outputFile << buf << std::endl;
 			}
 		};
 
 	if(beamEnergies.empty()) {
-		for (const auto& angle : scatteredAngles) {
-			mdm->SetScatteredAngle(angle);
+		std::cerr << "Need to fix this: can't accept non-array energies!\n";
+		return 1;
+		// for (const auto& angle : scatteredAngles) {
+		// 	mdm->SetScatteredAngle(angle);
 		
-			if(useKinematics)
-			{
-				mdm->SendRayWithKinematics();
-			}
-			else
-			{
-				mdm->SendRay();
-			}
-			get_and_print(angle);
-		}
+		// 	if(useKinematics)
+		// 	{
+		// 		mdm->SendRayWithKinematics();
+		// 	}
+		// 	else
+		// 	{
+		// 		mdm->SendRay();
+		// 	}
+		// 	get_and_print(angle);
+		// }
 	}
 	else
 	{
@@ -223,18 +225,23 @@ int main(int argc, char* argv[]) {
 			{
 				for(size_t ifield = 0; ifield< dipoleField.size(); ++ifield)
 				{
+					double mp,hp;
 					if(multipoleField.empty())
 					{
 						mdm->SetMDMDipoleField(dipoleField.at(ifield));
+						hp = dipoleField.at(ifield)/1.034;
+						mp = -1; // scaled
 					}
 					else
 					{
 						mdm->SetMDMDipoleMultipoleField(
 							dipoleField.at(ifield), multipoleField.at(ifield));
+						hp = dipoleField.at(ifield)/1.034;
+						mp = multipoleField.at(ifield);
 					}
 					mdm->SetScatteredAngle(angle);
 					mdm->SendRay();
-					get_and_print(angle);
+					get_and_print(angle,hp,mp);
 				}				
 			}
 		}
