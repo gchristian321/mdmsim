@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 	}
 	if(itRay == config.end()) {
 		std::cerr << "ERROR: \"rayinFile\" not set in \"" << argv[1] << "\"\n";
-		exit(1);
+		return 1;
 	}
 	Rayin rayin_(itRay->asString());
 
@@ -58,12 +58,27 @@ int main(int argc, char* argv[]) {
 			mdm->SetMDMAngle(it->asDouble());
 			printf("SET: %20s -- %.3f\n","MDM Angle [deg]",mdm->GetMDMAngle());
 		} else if (it.key().asString() == "mdmDipoleField") { // MDM FIELD [G]
-			// mdm->SetMDMDipoleField(it->asDouble());
-			dipoleField.push_back( it->asDouble() );
-			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",dipoleField.at(0));
+ 			if(it->isArray() == false) {
+				dipoleField.push_back( it->asDouble() );
+				printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",dipoleField.at(0));
+			} else {
+				printf("SET: %20s -- ","Dipole Field [G]");
+				for(unsigned int i = 0;i<it->size();i++) {
+					dipoleField.push_back((*it)[i].asDouble());
+					printf("%.3f ",dipoleField.back());
+				} printf("\n");
+			}
 		} else if(it.key().asString() == "mdmEntranceMultipoleField") { // MULTIPOLE FIELD
-			multipoleField.push_back( it->asDouble() );
-			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",multipoleField.at(0));
+ 			if(it->isArray() == false) {
+				multipoleField.push_back( it->asDouble() );
+				printf("SET: %20s -- %.3f\n","Multipole Field [G]",multipoleField.at(0));
+			} else {
+				printf("SET: %20s -- ","Multipole Field [G]");
+				for(unsigned int i = 0;i<it->size();i++) {
+					multipoleField.push_back((*it)[i].asDouble());
+					printf("%.3f ",multipoleField.back());
+				} printf("\n");
+			}
 		} else if(it.key().asString() == "targetMass") {
       mdm->SetTargetMass(it->asDouble());
       printf("SET: %20s -- %.3f\n","Target Mass [amu]",mdm->GetTargetMass());
@@ -142,14 +157,16 @@ int main(int argc, char* argv[]) {
 	// Set field values
 	if(dipoleField.empty()) {
 		std::cerr << "ERROR: Dipole field not set!\n";
-		exit(1);
+		return 1;
 	}
 	if(multipoleField.empty()) {
 		std::cout << "Using standard scaling for entrance multipole field...\n";
-		mdm->SetMDMDipoleField(dipoleField.at(0));
+	} else if(multipoleField.size() != dipoleField.size()) {
+		std::cerr << "ERROR: Need the same number of multipole field values "
+							<< "as dipole field values!\n";
+		return 1;
 	} else {
 		std::cout << "Using manual value for entrance multipole field...\n";
-		mdm->SetMDMDipoleMultipoleField(dipoleField.at(0), multipoleField.at(0));
 	}
 	if(beamPosition.empty()){
 		mdm->SetBeamPosition(0,0,0);
@@ -192,13 +209,29 @@ int main(int argc, char* argv[]) {
 			}
 			get_and_print(angle);
 		}
-	} else {
-		for (const auto& energy : beamEnergies) {
+	}
+	else
+	{
+		for (const auto& energy : beamEnergies)
+		{
 			mdm->SetScatteredEnergy(energy);
-			for (const auto& angle : scatteredAngles) {
-				mdm->SetScatteredAngle(angle);
-				mdm->SendRay();
-				get_and_print(angle);
+			for (const auto& angle : scatteredAngles)
+			{
+				for(size_t ifield = 0; ifield< dipoleField.size(); ++ifield)
+				{
+					if(multipoleField.empty())
+					{
+						mdm->SetMDMDipoleField(dipoleField.at(ifield));
+					}
+					else
+					{
+						mdm->SetMDMDipoleMultipoleField(
+							dipoleField.at(ifield), multipoleField.at(ifield));
+					}
+					mdm->SetScatteredAngle(angle);
+					mdm->SendRay();
+					get_and_print(angle);
+				}				
 			}
 		}
 	}
