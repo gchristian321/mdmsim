@@ -57,17 +57,21 @@ int main(int argc, char* argv[]) {
 		} else if (it.key().asString() == "mdmAngle") {       // MDM ANGLE [degrees]
 			mdm->SetMDMAngle(it->asDouble());
 			printf("SET: %20s -- %.3f\n","MDM Angle [deg]",mdm->GetMDMAngle());
-		} else if (it.key().asString() == "mdmDipoleField") { // MDM FIELD [G]
- 			if(it->isArray() == false) {
-				dipoleField.push_back( it->asDouble() );
-				printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",dipoleField.at(0));
+		} else if (it.key().asString() == "mdmDipoleField" ||  // MDM FIELD [G]
+							 it.key().asString() == "mdmDipoleHallProbe")
+		{
+			// scale field value if hall probe entered instead of real field
+			double scl = it.key().asString() == "mdmDipoleField" ? 1. : 1.034;
+			if(it->isArray() == false) {
+				dipoleField.push_back( scl*it->asDouble() );
+				printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]", dipoleField.back());
 			} else {
 				printf("SET: %20s -- ","Dipole Field [G]");
 				for(unsigned int i = 0;i<it->size();i++) {
-					dipoleField.push_back((*it)[i].asDouble());
+					dipoleField.push_back(scl*(*it)[i].asDouble());
 					printf("%.3f ",dipoleField.back());
 				} printf("\n");
-			}
+			}				
 		} else if(it.key().asString() == "mdmEntranceMultipoleField") { // MULTIPOLE FIELD
  			if(it->isArray() == false) {
 				multipoleField.push_back( it->asDouble() );
