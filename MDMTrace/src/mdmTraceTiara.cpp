@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 	std::ofstream outputFile;
 	std::vector<double> scatteredAngles, beamEnergies, beamPosition;
-	double dipoleField=-1, multipoleField=-1;
+	std::vector<double> dipoleField, multipoleField;
 	//Read from config file
 	bool useKinematics = false;
 	for(Json::Value::iterator it = config.begin();it!=config.end();it++) {
@@ -59,11 +59,11 @@ int main(int argc, char* argv[]) {
 			printf("SET: %20s -- %.3f\n","MDM Angle [deg]",mdm->GetMDMAngle());
 		} else if (it.key().asString() == "mdmDipoleField") { // MDM FIELD [G]
 			// mdm->SetMDMDipoleField(it->asDouble());
-			dipoleField = it->asDouble();//.push_back( it->asDouble() );
-			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",dipoleField);
+			dipoleField.push_back( it->asDouble() );
+			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",dipoleField.at(0));
 		} else if(it.key().asString() == "mdmEntranceMultipoleField") { // MULTIPOLE FIELD
-			multipoleField = it->asDouble();
-			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",multipoleField);
+			multipoleField.push_back( it->asDouble() );
+			printf("SET: %20s -- %.3f\n","MDM Dipole Field [G]",multipoleField.at(0));
 		} else if(it.key().asString() == "targetMass") {
       mdm->SetTargetMass(it->asDouble());
       printf("SET: %20s -- %.3f\n","Target Mass [amu]",mdm->GetTargetMass());
@@ -101,17 +101,6 @@ int main(int argc, char* argv[]) {
 				} printf("\n");
 			}
 		}
-#if 0
-		else if(it.key().asString() == "scatteredEnergies") { // ION ANGLES [deg]
-      for(unsigned int i = 0;i<it->size();i++) {
-				beamEnergies.push_back((*it)[i].asDouble());
-      }
-      printf("SET: %20s -- ","Scattered Angles [deg]");
-      for(unsigned int i = 0;i<scatteredAngles.size();i++) {
-				printf("%.3f ",scatteredAngles[i]);
-      } printf("\n");
-		}
-#endif
 		else if(it.key().asString() == "scatteredAngles") { // ION ANGLES [deg]
       for(unsigned int i = 0;i<it->size();i++) {
 				scatteredAngles.push_back((*it)[i].asDouble());
@@ -151,16 +140,16 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	// Set field values
-	if(dipoleField < 0){
+	if(dipoleField.empty()) {
 		std::cerr << "ERROR: Dipole field not set!\n";
 		exit(1);
 	}
-	if(multipoleField < 0){
+	if(multipoleField.empty()) {
 		std::cout << "Using standard scaling for entrance multipole field...\n";
-		mdm->SetMDMDipoleField(dipoleField);
+		mdm->SetMDMDipoleField(dipoleField.at(0));
 	} else {
 		std::cout << "Using manual value for entrance multipole field...\n";
-		mdm->SetMDMDipoleMultipoleField(dipoleField, multipoleField);
+		mdm->SetMDMDipoleMultipoleField(dipoleField.at(0), multipoleField.at(0));
 	}
 	if(beamPosition.empty()){
 		mdm->SetBeamPosition(0,0,0);
