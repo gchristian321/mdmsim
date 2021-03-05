@@ -39,6 +39,8 @@ class MDMTrace {
   void GetOxfordWirePositions(double&,double&,double&,double&,double&);
   void GetOxfordWirePositions(double&,double&,double&,double&,double&,
 															double&,double&,double&,double&,double&);
+	static void SetOxfordWireSpacing(double x12, double x23, double x34)
+		{ oxfordWireSpacing_[0]=x12;oxfordWireSpacing_[1]=x23;oxfordWireSpacing_[2]=x34; }
  private:
   MDMTrace() {};
   static MDMTrace* instance_;
