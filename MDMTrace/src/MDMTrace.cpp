@@ -56,7 +56,10 @@ extern "C" {
 
 MDMTrace* MDMTrace::instance_ = 0;
 double MDMTrace::jeffParams_[6] = {-0.51927,0.038638,0.028404,-0.022797,-0.019275,0.755583};
-double MDMTrace::oxfordWireSpacing_[3] = {15.1,16.3,16.3};
+//double MDMTrace::oxfordWireSpacing_[3] = {15.1,16.3,16.3};
+// GAC - update according to Shuya's drawing 2021/03/04
+// previous spacings do not account for wire thickness (1.4 cm)
+double MDMTrace::oxfordWireSpacing_[3] = {16.5,17.7,15.9};
 
 MDMTrace* MDMTrace::Instance() {
   if(!instance_) {
