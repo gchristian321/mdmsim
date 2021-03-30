@@ -1,0 +1,19 @@
+// EXAMPLE CONFIG FILE FOR TIARA
+{
+// ALWAYS
+    "rayinFile"        : "../rayin-t4t.dat", // input RAYTRACE file
+    "mdmAngle"         : 0.0,       // MDM angle in degrees
+    "mdmDipoleField"   : 10780.0,    // MDM field in Gauss
+    "mdmEntranceMultipoleField" : 5208.0, // OPTIONAL Entrance multipole field in Gauss
+    "beamEnergy"       : 814.0,     // incoming beam energy, MeV
+    "projectileMass"   : 20.988361, // incoming beam mass, AMU
+    "targetMass"       : 1.007,     // target mass, AMU
+    "scatteredMass"    : 20.988361, // mass of scattered particle
+    "qValue"           : 0.0,       // reaction q-Value to the GROUND STATE, MeV
+    "excitationEnergy" : 0.0,       // excitation energy
+    "excitationIsScattered" : true, // true if execitation energy goes to scattered particle, false if goes to residual
+    "scatteredCharge"  : 10.0,      //
+    "scatteredAngles"  : [0, 180],  // Range of COM angles, degrees
+    "numberOfRays"     : 5000,      // number of events to run
+    "outputFile"       : "test.root"
+}
