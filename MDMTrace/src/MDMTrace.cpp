@@ -60,6 +60,7 @@ double MDMTrace::jeffParams_[6] = {-0.51927,0.038638,0.028404,-0.022797,-0.01927
 // GAC - update according to Shuya's drawing 2021/03/04
 // previous spacings do not account for wire thickness (1.4 cm)
 double MDMTrace::oxfordWireSpacing_[3] = {16.5,17.7,15.9};
+double MDMTrace::PPACSpacing_[2] = {42,10};
 
 MDMTrace* MDMTrace::Instance() {
   if(!instance_) {
@@ -265,7 +266,21 @@ void MDMTrace::GetOxfordWirePositions(double& a1,double& x1,double& x2,double& x
 	x2 = oxfordWire1Pos+tanAngle*oxfordWireSpacing_[0];
 	x3 = oxfordWire1Pos+tanAngle*(oxfordWireSpacing_[0]+oxfordWireSpacing_[1]);
 	x4 = oxfordWire1Pos+tanAngle*(oxfordWireSpacing_[0]+oxfordWireSpacing_[1]+oxfordWireSpacing_[2]);
-} 
+}
+
+
+void MDMTrace::GetPPACScintPositions(double& a1,double& x1,double& x2,double& x3) {
+	double oxfordWire1Pos = blck2_.XO[0];
+	double oxfordWire1Ang = blck2_.VXO[0];
+	double tanAngle = tan(1e-3*oxfordWire1Ang);
+
+	a1 = oxfordWire1Ang;
+
+	x1 = oxfordWire1Pos;
+	x2 = oxfordWire1Pos+tanAngle*PPACSpacing_[0];
+	x3 = oxfordWire1Pos+tanAngle*(PPACSpacing_[0] + PPACSpacing_[1]);
+}
+
 
 void MDMTrace::GetOxfordWirePositions(double& a1,double& x1,double& x2,double& x3,double& x4,
 																			double& b1,double& y1,double& y2,double& y3,double& y4) {

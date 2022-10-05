@@ -36,6 +36,7 @@ class MDMTrace {
   void GetPositionAngleFirstWire(double&,double&) const;
   void GetPositionAngleFirstWire(double&,double&,double&,double&) const;
   void GetOxfordWirePositions(double&,double&,double&,double&);
+	void GetPPACScintPositions(double&,double&,double&,double&);
   void GetOxfordWirePositions(double&,double&,double&,double&,double&);
   void GetOxfordWirePositions(double&,double&,double&,double&,double&,
 															double&,double&,double&,double&,double&);
@@ -46,6 +47,7 @@ class MDMTrace {
   static MDMTrace* instance_;
   static double jeffParams_[6];
   static double oxfordWireSpacing_[3];
+  static double PPACSpacing_[2];
   double beamEnergy_;
   double scatteredEnergy_;
   double scatteredAngles_[2];

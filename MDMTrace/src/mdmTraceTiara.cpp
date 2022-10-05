@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
 		else if(it.key().asString() == "outputFile") {
 			printf("Saving output to file: \"%s\"\n", it->asString().c_str());
 			outputFile.open(it->asString().c_str(), std::ofstream::out);
-			outputFile << "anglein:energy:hallprobe:multipole:angleout:x1:x2:x3:x4/D" << std::endl;
+			outputFile << "anglein:energy:hallprobe:multipole:angleout:x1:x2:x3/D" << std::endl;
 		}
 		else if(it.key().asString() != "rayinFile") {
 			fprintf(stderr, "WARNING: skipping unrecognized JSON field: %s\n",
@@ -209,20 +209,17 @@ int main(int argc, char* argv[]) {
 	
 	auto get_and_print =
 		[&](double angle,double hp,double mp){
-			double x1,x2,x3,x4,a1;
-			mdm->GetOxfordWirePositions(a1,x1,x2,x3,x4);
-			double MM_R1_distance = 38.325 - 2.5;// W1 -> MM Row 1
-			double mm1 = x1 + tan(1e-3*a1)*MM_R1_distance;
-			//
+			double x1,x2,x3,a1;
+			mdm->GetPPACScintPositions(a1,x1,x2,x3);
 			double energy = (useKinematics) ? mdm->GetEnergyAfterKinematics() :
 				mdm->GetScatteredEnergy();
 			printf("Initial Angle/deg: %4.2f  Energy/MeV: %4.2f  W1Angle/mrad (deg):"
-						 " %+6.2f (%+3.2f)  Wire Pos/cm: 1: %+5.4f 2: %+5.4f 3: %+5.4f 4: %+5.4f  MM1/cm: %+5.4f\n",
-						 angle,energy,a1,a1/17.453293,x1,x2,x3,x4,mm1);
+			 			 " %+6.2f (%+3.2f)  PPAC1/cm: 1: %+5.4f PPAC2: %+5.4f SCINT: %+5.4f\n",
+						 angle,energy,a1,a1/17.453293,x1,x2,x3);
 			if(outputFile.is_open()){
 				char buf[4096];
-				sprintf(buf, "%+8.2f\t %8.2f\t %8.2f\t %8.2f\t %+8.2f\t %+5.4f\t %+5.4f\t %+5.4f\t %+5.4f",
-								angle,energy,hp,mp,a1,x1,x2,x3,x4);
+				sprintf(buf, "%+8.2f\t %8.2f\t %8.2f\t %8.2f\t %+8.2f\t %+5.4f\t %+5.4f\t %+5.4f\t",
+								angle,energy,hp,mp,a1,x1,x2,x3);
 				outputFile << buf << std::endl;
 			}
 		};
