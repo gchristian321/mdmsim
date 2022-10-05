@@ -4,54 +4,54 @@
 #include <stdio.h>
 
 extern "C" {
-  void raytrace_(int*);
+void raytrace_(int*);
 
-  extern struct {
-    double DATA[200][75];
-    double ITITLE[200];
-  } blck0_;
+extern struct {
+double DATA[200][75];
+double ITITLE[200];
+} blck0_;
 
 // incoming beam parameters
-  extern struct {
-    double XI[1000];
-    double YI[1000];
-    double ZI[1000];
-    double VXI[1000];
-    double VYI[1000];
-    double VZI[1000];
-    double DELP[1000];
-  } blck1_;
+extern struct {
+double XI[1000];
+double YI[1000];
+double ZI[1000];
+double VXI[1000];
+double VYI[1000];
+double VZI[1000];
+double DELP[1000];
+} blck1_;
 
 // post-magnet parameters
-  extern struct {
-    double XO[1000];
-    double YO[1000];
-    double ZO[1000];
-    double VXO[1000];
-    double VYO[1000];
-    double VZO[1000];
-    double RTL[1000];
-    double RLL[1000];
-  } blck2_;
+extern struct {
+double XO[1000];
+double YO[1000];
+double ZO[1000];
+double VXO[1000];
+double VYO[1000];
+double VZO[1000];
+double RTL[1000];
+double RLL[1000];
+} blck2_;
 
 // "scattered ray" parameters
-  extern struct {
-    double ENERGY;
-    double VEL;
-    double PMASS;
-    double Q0;
-  } blck4_;
+extern struct {
+double ENERGY;
+double VEL;
+double PMASS;
+double Q0;
+} blck4_;
 
 // "kinematics parameters"
-  extern struct {
-    double THTSPEC;
-    double TRGT1;
-    double AM[4];
-    double QVALUE;
-    double EEXC;
-    double THETACAL[10];
-    double EKINE;
-  } kineblck_;
+extern struct {
+double THTSPEC;
+double TRGT1;
+double AM[4];
+double QVALUE;
+double EEXC;
+double THETACAL[10];
+double EKINE;
+} kineblck_;
 }
 
 MDMTrace* MDMTrace::instance_ = 0;
@@ -177,7 +177,7 @@ double MDMTrace::GetScatteredEnergy() const {
 }
 
 void MDMTrace::SetTargetMass(double mass) {
-    kineblck_.AM[1] = mass;
+	kineblck_.AM[1] = mass;
 }
 
 double MDMTrace::GetTargetMass() const {
@@ -185,7 +185,7 @@ double MDMTrace::GetTargetMass() const {
 }
 
 void MDMTrace::SetProjectileMass(double mass) {
-    kineblck_.AM[0] = mass;
+	kineblck_.AM[0] = mass;
 }
 
 double MDMTrace::GetProjectileMass() const {
@@ -193,7 +193,7 @@ double MDMTrace::GetProjectileMass() const {
 }
 
 void MDMTrace::SetScatteredMass(double mass) {
-    blck4_.PMASS = mass;
+	blck4_.PMASS = mass;
 }
 
 double MDMTrace::GetScatteredMass() const {
@@ -201,7 +201,7 @@ double MDMTrace::GetScatteredMass() const {
 }
 
 void MDMTrace::SetScatteredCharge(double charge) {
-    blck4_.Q0 = charge;
+	blck4_.Q0 = charge;
 }
 
 double MDMTrace::GetScatteredCharge() const {
@@ -213,12 +213,12 @@ double MDMTrace::GetEnergyAfterKinematics() const {
 }
 
 void MDMTrace::SendRayWithKinematics() {
-    int flag = 1;
-    blck4_.ENERGY = beamEnergy_;
-    raytrace_(&flag);
+	int flag = 1;
+	blck4_.ENERGY = beamEnergy_;
+	raytrace_(&flag);
 }
 
-void MDMTrace::SendRay() {
+void MDMTrace::SendRay() {	
   int flag = 2;
   blck4_.ENERGY = scatteredEnergy_;
   blck1_.XI[0]=beamPositions_[0];

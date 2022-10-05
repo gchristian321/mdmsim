@@ -6,11 +6,11 @@
     "mdmDipoleField"   : 6095.4, // MDM field in Gauss
     "useKinematics"    : true,   // use reaction kinematics (true/false)
 // useKinematics == true
-    "beamEnergy"       : 190.0,   // incoming beam energy, MeV
-    "projectileMass"   : 19.0,    // incoming beam mass, AMU
-    "targetMass"       : 2.01355, // target mass, AMU
-    "qValue"           : 4.3768,  // reaction q-Value to the GROUND STATE, MeV
-    "excitationEnergy" : 0.656,   // extitation energy of reaction product, MeV
+    "beamEnergy"       : 840.0,   // incoming beam energy, MeV
+    "projectileMass"   : 21.0,    // incoming beam mass, AMU
+    "targetMass"       : 1.007,   // target mass, AMU
+    "qValue"           : 0.0,     // reaction q-Value to the GROUND STATE, MeV
+    "excitationEnergy" : 0.0,     // extitation energy of reaction product, MeV
 // useKinematics == false
     "scatteredEnergy"  : 190.0,   // input ray energy, MeV
 // ALWAYS
